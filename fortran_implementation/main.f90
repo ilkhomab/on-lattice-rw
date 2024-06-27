@@ -12,6 +12,11 @@ module box_parameters
         integer :: x, y, z  
     end type point3D_type
 
+! This type is used to declare a point in 3D space with x, y and z coordinates
+    type :: point_type_with_hash
+        integer :: x, y, z, hash  
+    end type point_type_with_hash
+
 ! This type is used to declare a point in 3D space with x, y and z coordinates 
 ! and 3 neighbours which in turn have x, y and z coordinates
     type :: point_type
@@ -54,7 +59,7 @@ program main
     implicit none
     integer(kind=int_type) :: max_points
     type(point_type), allocatable, dimension(:) :: point
-    type(point_type), allocatable, dimension(:) :: fresh_point
+    type(point_type_with_hash), allocatable, dimension(:) :: fresh_point
     type(point_type), allocatable, dimension(:) :: box 
     type(point3D_type), allocatable, dimension(:) :: future_points
     integer, allocatable, dimension(:) :: future_points_hashes
@@ -62,13 +67,14 @@ program main
     type(point3D_type), dimension(1:6) :: neighbours
     integer :: number_of_fresh_points, number_of_valid_neighbours
     integer :: tmp_hash 
-    integer :: index
-    integer :: i0, i, j, k, h, h0
+    integer :: ihash, i00
+    integer :: i0, i, j, k, k0, j0
 !
     ! ANSI escape code for red color
     character(len=*), parameter :: red = char(27) // '[31m'
     character(len=*), parameter :: green = char(27) // '[32m'
     character(len=*), parameter :: blue = char(27) // '[34m'
+    character(len=*), parameter :: magenta = char(27) // '[35m'
     ! ANSI escape code to reset color
     character(len=*), parameter :: reset = char(27) // '[0m'
 
@@ -82,57 +88,91 @@ program main
     allocate(future_points(1:max_points))
     allocate(future_points_hashes(1:max_points))
     
+    do k=1, 6
+       write(*,'(A, A, 3I2, A)')blue, 'PERTURBATIONS:', & 
+                                    cube_lattice_perturbations(k)%x, &
+                                    cube_lattice_perturbations(k)%y, &
+                                    cube_lattice_perturbations(k)%z, reset
+    enddo
 
     fresh_point(1)%x=0
     fresh_point(1)%y=0
     fresh_point(1)%z=0
+    fresh_point(1)%hash=0
 
     number_of_fresh_points=1
     !add the fresh point to the box
     !box(number_of_fresh_points)=fresh_point(1)
     !add a hash of the fresh point to the array of hashes
     hash(number_of_fresh_points)=0
-    i0=0
+    i0=1
+    i00=i0
     do while(i0 <= max_points .and. number_of_fresh_points /= 0)
       number_of_valid_neighbours=0
+      j0=0
       do j = 1, number_of_fresh_points
-        write(*, '(A, A, 3I2, A)') red, ' FRESH POINT=', fresh_point(j)%x, fresh_point(j)%y, fresh_point(j)%z, reset
+        write(*, '(A, A, I2, A, 3I2, A)') red, 'j = ', j, ' FRESH POINT=', fresh_point(j)%x, fresh_point(j)%y, fresh_point(j)%z, reset
+        ihash = minval(minloc(hash(1:i00), mask = hash(1:i00) == fresh_point(j)%hash))
         do k = 1, 6  ! run through the 6 neigbours and check if they are valid neighbours
           neighbours(k)%x = fresh_point(j)%x+cube_lattice_perturbations(k)%x 
           neighbours(k)%y = fresh_point(j)%y+cube_lattice_perturbations(k)%y 
           neighbours(k)%z = fresh_point(j)%z+cube_lattice_perturbations(k)%z 
+          box(ihash)%neighbour(k)%x=neighbours(k)%x
+          box(ihash)%neighbour(k)%y=neighbours(k)%y
+          box(ihash)%neighbour(k)%z=neighbours(k)%z
+        enddo
+        do k = 1, 6  ! run through the 6 neigbours and check if they are valid neighbours
           ! check if the neighbour points are in the domain
           if ((neighbours(k)%x >= 0 .and. neighbours(k)%x < xmax) .and. &
              &(neighbours(k)%y >= 0 .and. neighbours(k)%y < ymax) .and. &
              &(neighbours(k)%z >= 0 .and. neighbours(k)%z < zmax)) then
+
+
+            write(*,'(A, A, 3I2, A, 3I2, A)')blue, 'POINT:', box(ihash)%x, box(ihash)%y, box(ihash)%z, '  NEIGHBOUR', & 
+                                         neighbours(k)%x, &
+                                         neighbours(k)%y, &
+                                         neighbours(k)%z, reset
+            write(*,'(A, A, 3I2, A, 3I2, A)')magenta, 'POINT:', box(ihash)%x, box(ihash)%y, box(ihash)%z, '  FRESH_POINT', & 
+                                         fresh_point(j)%x, &
+                                         fresh_point(j)%y, &
+                                         fresh_point(j)%z, reset
+
             number_of_valid_neighbours=number_of_valid_neighbours+1
             future_points(number_of_valid_neighbours)=neighbours(k)
             future_points_hashes(number_of_valid_neighbours)=get_hash(future_points(number_of_valid_neighbours)%x,&
                                                                      &future_points(number_of_valid_neighbours)%y,&
                                                                      &future_points(number_of_valid_neighbours)%z)
+
+! the following if condition checks if future_points_hashes(h) is not in the hash array
+            if (any(future_points_hashes(number_of_valid_neighbours) == hash(1:i0))) then
+! this is not a fresh point
+              cycle
+            else
+              i0=i0+1
+              j0=j0+1
+
+              hash(i0) = future_points_hashes(number_of_valid_neighbours)
+              box(i0)%x = future_points(number_of_valid_neighbours)%x
+              box(i0)%y = future_points(number_of_valid_neighbours)%y
+              box(i0)%z = future_points(number_of_valid_neighbours)%z
+! this is a fresh point
+              fresh_point(j0)%x=future_points(number_of_valid_neighbours)%x  
+              fresh_point(j0)%y=future_points(number_of_valid_neighbours)%y  
+              fresh_point(j0)%z=future_points(number_of_valid_neighbours)%z  
+              fresh_point(j0)%hash=future_points_hashes(number_of_valid_neighbours)
+              write(*,'(A, A, I10, A, I2, A, 3I2, A)')green, 'HASH:', fresh_point(j0)%hash, ' j0=',j0, '  fresh point', & 
+                                           fresh_point(j0)%x, &
+                                           fresh_point(j0)%y, &
+                                           fresh_point(j0)%z, reset
+            endif
           endif
+
+            print*,'pause'
+            read(*,*)
         enddo ! do k = 1, 6
       enddo ! do j = 1, number_of_fresh_points
-      number_of_fresh_points=0
-      do h=1,number_of_valid_neighbours
-! the following if condition checks if future_points_hashes(h) is not in the hash array
-        if (any(future_points_hashes(h) == hash(1:i0))) then
-! this is not a fresh point
-          cycle
-        else
-          number_of_fresh_points=number_of_fresh_points+1
-          i0=i0+number_of_fresh_points
-! this is a fresh point
-          fresh_point(number_of_fresh_points)%x=future_points(h)%x  
-          fresh_point(number_of_fresh_points)%y=future_points(h)%y  
-          fresh_point(number_of_fresh_points)%z=future_points(h)%z  
-          hash(i0) = future_points_hashes(h)
-          write(*,'(A, A, I10, A, 3I2, A)')green, 'HASH:', future_points_hashes(h), '  fresh point', & 
-                                       fresh_point(number_of_fresh_points)%x, &
-                                       fresh_point(number_of_fresh_points)%y, &
-                                       fresh_point(number_of_fresh_points)%z, reset
-        endif
-      enddo
+      number_of_fresh_points=j0
+      i00=i0
     enddo ! while(i0 <= max_points)
 
 !            box(i0+j)%neighbour(number_of_valid_neighbours)%x=neighbours(k)%x
@@ -144,7 +184,7 @@ program main
 
       ! Pause execution for 5 seconds
       !CALL SYSTEM("sleep 5")
-do i=1,24
+do i=1,i0
 write(*, '(A, I10,A, A, I1, A, I1, A, I1, A, 6(A, I1, A, I1, A, I1), A)') &
     'hash:', hash(i), ', ', &
     'point: (', box(i)%x, ',', box(i)%y, ',', box(i)%z, '), neighbours:', '(', &
