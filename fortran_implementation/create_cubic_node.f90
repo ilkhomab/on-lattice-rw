@@ -1,7 +1,7 @@
 module lattice_growth
     implicit none
-    integer, parameter :: X = 30, Y = 30, Z = 30 ! Example dimensions
-    integer, parameter :: max_points = X * Y * Z !2147483647 !X * Y * Z
+    integer :: X, Y, Z ! Example dimensions
+    integer :: max_points
     type :: TreeNode
         integer :: point(3)
         integer, allocatable :: neighbours(:,:)
@@ -216,6 +216,39 @@ end module lattice_growth
 program main
     use lattice_growth
     implicit none
+    integer :: iargc, n
+    integer, allocatable :: cmd_args(:)
+    character(len=8) :: cmd_arg
+
+    ! Get the number of command-line arguments
+    iargc = command_argument_count()
+
+    ! Check if the correct number of arguments are provided
+    if (iargc /= 3) then
+        write(*,"(A,A,A)")magenta,  'Usage: ./exe X Y Z', reset
+        stop
+    end if
+
+    ! Allocate array to hold command-line arguments
+    allocate(cmd_args(iargc))
+
+    ! Read command-line arguments
+    do n = 1, iargc
+        call get_command_argument(n, cmd_arg)
+        read(cmd_arg, *) cmd_args(n)
+    end do
+
+    ! Assign X, Y, Z from command-line arguments
+    X = cmd_args(1)
+    Y = cmd_args(2)
+    Z = cmd_args(3)
+
+    max_points = X * Y * Z !2147483647 !X * Y * Z
+
+    if(max_points>2147483647) then
+      write(*,"(A,A,A)")magenta, 'max_point > 2147483647 which is beyond int4 range. Please enter smaller values of X, Y, Z', reset
+      stop
+    endif
 
     call initialize_cube_lattice_perturbations()
     call grow_lattice()
