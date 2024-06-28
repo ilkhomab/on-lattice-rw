@@ -60,3 +60,6 @@ point: (1, 0, 1) neighbours: {(1, 1, 1), (0, 0, 1), (1, 0, 0)}
 point: (0, 1, 1) neighbours: {(1, 1, 1), (0, 0, 1), (0, 1, 0)}
 point: (1, 1, 1) neighbours: {(0, 1, 1), (1, 0, 1), (1, 1, 0)}
 ```
+
+![Performance](box.png "Performance, Fortran vs Python")
+
