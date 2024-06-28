@@ -67,5 +67,6 @@ Comparison of compute time between Fortran and Python implementations as a funct
 ![Performance](box.png "Performance, Fortran vs Python")
 
 Comparison of maximum resident set size (max RSS) memory requirements between Fortran and Python implementations as a function of box size.
+Python code encounters an out-of-memory error when the box size exceeds 100x100x100.
 ![Memory](memory.png "Memory requirement, Fortran vs Python")
 
