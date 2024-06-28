@@ -204,7 +204,7 @@ program main
     ! Output results (for demonstration purposes)
     write(*,"(A,A,I10,A,A)")magenta, 'Grew lattice with ', num_points, ' points.', reset
 
-    call print_box()
+    !call print_box()
 
 end program main
 
