@@ -8,7 +8,8 @@ This is the source code for growing a cubic lattice using Fortran.
 
 ## Source Code
 
-The source code is  `create_cubic_node_opt3.f90`. It is converted from create_node_dict.py which is located in
+The source code is  `create_cubic_node_opt3.f90`. It is converted from create_node_dict.py which is developed by 
+Max Galettis and located in
 the parent folder.
 
 ## Compilation
