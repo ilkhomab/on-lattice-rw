@@ -62,4 +62,5 @@ point: (1, 1, 1) neighbours: {(0, 1, 1), (1, 0, 1), (1, 1, 0)}
 ```
 
 ![Performance](box.png "Performance, Fortran vs Python")
+![Memory](memory.png "Memory requirement, Fortran vs Python")
 
