@@ -61,6 +61,11 @@ point: (0, 1, 1) neighbours: {(1, 1, 1), (0, 0, 1), (0, 1, 0)}
 point: (1, 1, 1) neighbours: {(0, 1, 1), (1, 0, 1), (1, 1, 0)}
 ```
 
+### Performance analysis
+
+Comparison of compute time between Fortran and Python implementations as a function of box size.
 ![Performance](box.png "Performance, Fortran vs Python")
+
+Comparison of maximum resident set size (max RSS) memory requirements between Fortran and Python implementations as a function of box size.
 ![Memory](memory.png "Memory requirement, Fortran vs Python")
 
