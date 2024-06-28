@@ -14,7 +14,6 @@ The source code is  `create_cubic_node_opt3.f90`.
 
 To compile the source code, use the provided Makefile. In your terminal, run:
 
-```sh
 make
 ```
 
