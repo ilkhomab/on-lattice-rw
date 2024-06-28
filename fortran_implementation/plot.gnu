@@ -16,8 +16,9 @@ if (!exists('COL10'))       COL10='#a2142f' #dark-red
 if (!exists('COL11'))       COL11='#21908d' #blue-green
 if (!exists('COL12'))       COL12='#6495ED' #aqua
 
-set term postscript enhanced eps color solid "Times-Roman,16" #size 8.5cm,12cm
-set output "box.eps"
+#set term postscript enhanced eps color solid "Times-Roman,16" #size 8.5cm,12cm
+set terminal png 
+set output "box.png"
 #set point sizes
 my_ps=0.60
 
@@ -38,7 +39,7 @@ set xlabel "X=Y=Z"
 
 
 p 'time.log' u 1:5 title "Fortran: 1-core" lw 2 pt 10 lc rgb COL4 ps my_ps w lp ,\
-  'time_python.log'  u 1:4 title "Python" lw 2 pt 6 lc rgb COL2 ps my_ps w lp 
+  '../time_python.log'  u 1:4 title "Python: 1-core" lw 2 pt 6 lc rgb COL2 ps my_ps w lp 
 
 
 #!epstopdf performance.eps
