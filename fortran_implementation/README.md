@@ -1,6 +1,9 @@
 ```markdown
 # Cubic Lattice Growth
 
+Ilkhom Abdurakhmanov  
+28/06/2024
+
 This is the source code for growing a cubic lattice using Fortran.
 
 ## Source Code
