@@ -230,14 +230,16 @@ def cube_generate_box(X,Y,Z, folder=''):
         #update values for the next iteration of the while loop
         fresh_points = future_points - set(box)
         if not future_points: break #empty sets return false
-    
-    #record the lattice, number of nodes (its kind of like the effective volume and used for doing density of neurons calcs)
-    with open(os.path.join(folder, 'corresponding_nodes.txt'), 'a') as f:
-        f.write(f'{file_name}, {len(box)}\n')
 
-    # Pickle the box
-    with open(file_path, 'wb') as f:
-        pickle.dump(box, f)
+#    print(f'number of points:',len(set(box)))
+    
+#    #record the lattice, number of nodes (its kind of like the effective volume and used for doing density of neurons calcs)
+#    with open(os.path.join(folder, 'corresponding_nodes.txt'), 'a') as f:
+#        f.write(f'{file_name}, {len(box)}\n')
+
+#    # Pickle the box
+#    with open(file_path, 'wb') as f:
+#        pickle.dump(box, f)
 
 
 def octahedron_generate_box(X,Y,Z, folder=''):
@@ -418,22 +420,33 @@ def mad_test_icosahedron_generate_box(X,Y,Z, folder=''):
 
 
 def main():
-    X=200
-    Y=200
-    Z=200
+
+    if len(sys.argv) != 4:
+        print(f"Usage: {sys.argv[0]} <X> <Y> <Z>")
+        sys.exit(1)
+
+#    X=200
+#    Y=200
+#    Z=200
+
+    # Access the arguments
+    X = int(sys.argv[1])
+    Y = int(sys.argv[2])
+    Z = int(sys.argv[3])
+
     folder='lattices' #'' is current directory
     #box is counted computationally, 27 means 27 positions, values 0 to 26, hence 0<=x<X is used
     #158/159 is about 1mil points in the octahedral lattice (2 points per unit cell, each unit cell has a volume of 2^3)
     
     start_time = time.process_time()#time.perf_counter()
 
-    tetrahedron_generate_box(X,Y,Z,folder=folder)
-    #cube_generate_box(X,Y,Z,folder=folder)
+    #tetrahedron_generate_box(X,Y,Z,folder=folder)
+    cube_generate_box(X,Y,Z,folder=folder)
     #octahedron_generate_box(X,Y,Z, folder=folder)
 
     end_time = time.process_time() #time.perf_counter()
     elapsed_time = end_time - start_time
-    print(f'{X},{Y},{Z}. lattice built in:', elapsed_time)
+    print(X,Y,Z,elapsed_time)
     
 
 if __name__ == '__main__':
