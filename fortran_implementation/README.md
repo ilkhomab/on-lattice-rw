@@ -1,4 +1,3 @@
-```markdown
 # Cubic Lattice Growth
 
 Ilkhom Abdurakhmanov  
@@ -8,14 +7,15 @@ This is the source code for growing a cubic lattice using Fortran.
 
 ## Source Code
 
-The source code is  `create_cubic_node_opt3.f90`. It is converted from create_node_dict.py which is developed by 
+The source code is  `create_cubic_node_opt3.f90`. It is converted from `create_node_dict.py` which is developed by 
 Max Galettis and located in
 the parent folder.
 
 ## Compilation
 
-To compile the source code, use the provided Makefile. In your terminal, run:
+To compile the source code, use the provided `Makefile`. In your terminal, run:
 
+```
 make
 ```
 
@@ -109,7 +109,7 @@ Each neuron then independently and randomly chooses to move in either the x or y
    cd plotting/
    srun -n 1 -c 8 .././exe 50 50 6 1000
    ``` 
-   Here the code is run with the following parameters: `X=50` and `Y=50` sets the size of the domain. 
+   Here the code is run with the following parameters: `X=50` and `Y=50` sets the size of the domain, 
    `N=6` is the number of neurons and `time_steps=1000` is the number of time steps.
 
 3. **Plotting the results**:  
