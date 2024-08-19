@@ -84,13 +84,16 @@ Each neuron then independently and randomly chooses to move in either the x or y
    If a neuron moves to an unoccupied position, it successfully relocates to that position, which is then marked as occupied.
 
 2. **Branching on Occupied Position**:  
-   If a neuron attempts to move to a position already occupied by another neuron, branching occurs. This means that the neuron can only branch when it encounters another neuron.
+   If a neuron attempts to move to a position previously occupied by another neuron, branching occurs. 
+   This means that the neuron can only branch when it moves to the path of another neuron.
 
 3. **Boundary Conditions**:  
    If a neuron tries to move out of the defined bounds of the 2D domain, it must randomly select another direction to move instead.
 
 4. **Avoiding Self-Occupation**:  
-   Neurons are prohibited from moving back into positions they have previously occupied. If a neuron encounters a situation where all potential next positions are ones it has previously occupied, that particular branch of the neuron's movement terminates.
+   Neurons are prohibited from moving back into positions they have previously occupied. 
+   If a neuron encounters a situation where all potential next positions are ones it has previously occupied, 
+   that particular branch of the neuron's movement terminates.
 
 ## How to Run the Simulation
 
