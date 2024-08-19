@@ -70,3 +70,51 @@ Comparison of maximum resident set size (max RSS) memory requirements between Fo
 Python code encounters an out-of-memory error when the box size exceeds 100x100x100.
 ![Memory](memory.png "Memory requirement, Fortran vs Python")
 
+# Neuron Random Walk: 2D Case
+
+The Fortran source code (`case_2D.f90`) simulates a random walk of neurons in a 2D domain using a box dictionary. 
+The simulation aims to model how neurons move and interact within a defined space, adhering to specific rules that govern their behavior.
+
+## Overview
+
+The program starts by placing `N` neurons randomly within a 2D domain of size `X x Y`. 
+Each neuron then independently and randomly chooses to move in either the x or y direction according to the following rules:
+
+1. **Movement to Unoccupied Position**:  
+   If a neuron moves to an unoccupied position, it successfully relocates to that position, which is then marked as occupied.
+
+2. **Branching on Occupied Position**:  
+   If a neuron attempts to move to a position already occupied by another neuron, branching occurs. This means that the neuron can only branch when it encounters another neuron.
+
+3. **Boundary Conditions**:  
+   If a neuron tries to move out of the defined bounds of the 2D domain, it must randomly select another direction to move instead.
+
+4. **Avoiding Self-Occupation**:  
+   Neurons are prohibited from moving back into positions they have previously occupied. If a neuron encounters a situation where all potential next positions are ones it has previously occupied, that particular branch of the neuron's movement terminates.
+
+## How to Run the Simulation
+
+1. **Compile the Fortran Code**:  
+   To compile the `case_2D.f90` source file, you can use a Fortran compiler, such as `ftn`:
+
+   ```
+   ftn -O3 -fopenmp case_2D.f90 -o exe
+   ```
+   
+
+2. **Run the Executable**:  
+
+   After compiling, you can run the executable with the following command:
+   ```
+   cd plotting/
+   srun -n 1 -c 8 .././exe 50 50 6 1000
+   ``` 
+   Here the code is run with the following parameters: `X=50` and `Y=50` sets the size of the domain. 
+   `N=6` is the number of neurons and `time_steps=1000` is the number of time steps.
+
+3. **Plotting the results**:  
+   
+   After the computations are finished the animation which represents the neuron random walk can be generated using the following bash script:
+   ```
+   ./parallel_make_gif
+   ```
