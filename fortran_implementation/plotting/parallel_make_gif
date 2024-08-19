@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Loading parallel module
+ml parallel/20220522
+ml gnuplot/5.4.3 
+ml imagemagick/7.1.1-11-b42ww5b
+
+rm *.png
+# Total number of lines in the data file
+#total_lines=$(wc -l < neuron_path_1 | awk '{print $1}')
+total_lines=$(< time_steps)
+#total_lines=20
+
+
+# Function to process each frame
+plot_frame() {
+    local count=$1
+    echo "Processing frame $count"
+    gnuplot "plot_frame_${count}"
+}
+
+# Export the function so it can be used by GNU Parallel
+export -f plot_frame
+
+# Use GNU Parallel to parallelize the loop
+seq 1 $total_lines | parallel plot_frame
+
+# Create the GIF from the frames
+convert -delay 10 -loop 0 $(ls -v frame_*.png) animation.gif
+
+# Check if the GIF was created
+if [[ -f animation.gif ]]; then
+    echo "GIF animation created successfully: animation.gif"
+else
+    echo "Failed to create GIF animation"
+    exit 1
+fi
