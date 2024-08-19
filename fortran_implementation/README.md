@@ -118,3 +118,7 @@ Each neuron then independently and randomly chooses to move in either the x or y
    ```
    ./parallel_make_gif
    ```
+
+
+   This is the example animation for the 6-neurons case
+![Performance](animation.gif "Neuron random walk simulation")
